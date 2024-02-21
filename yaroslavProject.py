@@ -12,10 +12,13 @@ bot = telebot.TeleBot('6652275990:AAF9kBBdNLicha65GICiHHYIhQCxitLF9Lc')
 
 
 #global previousFishingStep
-global rightFishingAnswers
-global fishingStep
-fishingStep = 0
-rightFishingAnswers = 0
+
+global step
+global rightAnswers
+global switch
+switch = 0
+rightAnswers = 0
+step = 0
 
 userId = 0
 
@@ -33,42 +36,110 @@ fishingTestVar = [["Ссылка на рыбалку","Вредоносный с
                   ["Никогда не проверять", "Раз в месяц","Каждый раз"],
                   ["Грамматические ошибки","Странная ссылка","Все перечисленное"],
                   ["Удалить сообщения", "Поменять все пароли","Не делать ничего"],
-                  ["Утечка данных", "Попадание к мошенникам", "Все перечисленное"]
-]
+                  ["Утечка данных", "Попадание к мошенникам", "Все перечисленное"]]
+
+virusTestVar = [["Программа для заражения компьтеров","ПО, увеличивающее скорость ПК", "ПО для усиления безопасности"],
+                ["Файлы из Интернета","Спутниковое телевидение","Почта"],
+                ["Троянский конь","Рекламное ПО", "Вирус-червь"],
+                ["Взлом банковских счетов","Противодействие доступа к компьютерам","Получение доступа к данным"],
+                ["Социальный вирус","Вирус-червь","Рекламное ПО"],
+                ["Установка антвирусов","Обслуживание ПК","Использование общего Wifi"],
+                ["Сканирует на наличие вирусов","Проводит каптчу","Улучшает ПК"],
+                ["ПО, требующее выкуп","Крупная атака хакеров","Задача разработчика вируса"],
+                ["Взлом почтовых ящиков","ПО предоставляющее доступ к ПК","Антивирусное ПО"],
+                ["Передача шпионской информации", "Взлом паролей","Аттака для отключения сервера"],
+                ["Исправляют недочеты в ОС","Удаляют вирусы с ПК","Замедляют работу ПК"],
+                ["Вирус,скрывающий активность","ПО для производительности","Система безопасноти ПК",],
+                ["Запах гари при включении","Изображение котенка на рабочем столе","Медленная работа ПК"],
+                ["Выключить компьютер","Ничего не делать","Запустить антивирус"],
+                ["ПО для защиты ПК","ПО для увеличения скорости","Игры, зараженные вирусами"]]
+
+
+passwordTestVar = [["Перебор паролей","Вид мошенничества","Компьютерный вирус"],
+                   ["123456","Состоящий из имени","Состоящий из случайной комбинации"],
+                   ["Предоставить пароль","Если оф.источник, то предоставить","Не предоставлять"],
+                   ["Использовать одно и то же слово","Использовать личные данные","Использовать уникальные комбинации"],
+                   ["Подтверждение двумя паролями","Идентификация двумя формами","Метод связи двух банков"],
+                   ["Использовать простые комбинации","Использовать одинаковые пароли","Все перечисленное"],
+                   ["Изменение пароля спецалгоритмом","Публичное раскрытие пароля","Удаление пароля из системы"],
+                   ["Имя и фамилия","Название улицы","Случайная комбинация"],
+                   ["Проигнорировать","Поменять пароль и написать в поддержку","Поделиться с друзьями"],
+                   ["Пароль, который долго не используется","Пароль на носимом устройстве","Одноразовый пароль"],
+                   ["Запись пароля на видном месте","Использование парольных мессенджеров","Хранение в облаке"],
+                   ["Использовать одинаковый пароль","Использовать разные пароли","Распространять пароли"],
+                   ["Поделиться личными данными","Перебирать пароли","Использовать восстановление"],
+                   ["Легко запоминаемый пароль","Пароль, состоящий из цифр","Пароль,состоящий из комбинаций"],
+                   ["Сохранение в открытом виде","Использование парольного мессенджера","Сообщение пароля по почте"]]
+
+
+scamTestVar = [["Метод рыбалки","Вид мошенничества","Очистка рыбы"],
+               ["Номер паспорта","Имя и фамилия","Любимый жанр музыки"],
+               ["Номер телефона","Пароль от электронной почты","Все перечисленное"],
+               ["Предоставить пароль","Если оф.запрос, то предоставить","Никогда не предоставлять"],
+               ["Обновлять антивирус","Оставлять личные данные","Использовать общий Wifi"],
+               ["Однофакторная аутентификация","Двухфакторная аутентификация","Бесфакторная аутентификация"],
+               ["Находиться в панике","Связаться с правохранительными органами","Игнорировать происшествие"],
+               ["Имя домашнего питомца","Дата рождения","Произвольная комбинация"],
+               ["Обновлять пароли","Предоставлять банковскую информацию","Оставаться на данном сайте"],
+               ["Предоставить информацию","Перезвонить в банк","Заблокировать номер"],
+               ["Лекарство от болезни","Вредоносная программа","Что-то полезное для ПК"],
+               ["Нежелательная почта","Американские консервы","Блокировщик рекламы"],
+               ["Обновить антивирус","Ничего не делать","Выключить ПК"],
+               ["Пользоваться общим Wifi для покупок","Покупать товары со странных сайтов","Пользоваться HTTPS"],
+               ["Предоставить персональные данные","Использовать антивирус","Щелкать по спам-ссылкам"]]
+
+
+
+
+
 @bot.message_handler(commands=['start'])
 
 def start(message):
     separated_list = []
     global chatId
     global InlineStartMarkup
-    #print(userId)
+
 
     InlineStartMarkup = types.InlineKeyboardMarkup(row_width=2)
 
     moreInfoButton = types.InlineKeyboardButton("Узнать больше", callback_data="узнать больше")
 
     KeyboardMarkup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    #updateData = types.InlineKeyboardButton("Обновить данные",callback_data = "Обновить данные")
-
-
 
     InlineStartMarkup.add(moreInfoButton)
     bot.send_message(message.from_user.id, "👋Приветствую, я чат-бот, созданный для повышения уровня квалификации пенсионеров в области компьютерной безопасности")
-    #previousMessage = message
+
     connectionUser = sqlite3.connect('mainDatabase.db')
     cursorUser = connectionUser.cursor()
-    userId = bot.user.id
     
     userData = cursorUser.execute('SELECT tgId FROM Users')
     user = userData.fetchall()
     chatId = message.chat.id
-    print(chatId)
+
     for separator in user:
         separated_list.extend(separator)
-    print(separated_list)
+    
     if str(chatId) not in separated_list:
             cursorUser.execute('INSERT INTO Users  (tgId) VALUES (?)', (chatId,))
             connectionUser.commit()
+
+    else:
+        results_raw = cursorUser.execute('SELECT tgId,resultFishing,resultScam,resultVirus,resultPassword FROM Users ')
+        results = results_raw.fetchall()
+        connectionUser.commit()
+        for i in range(len(results) - 1):
+            if str(chatId) == results[i][0]:
+                resultFishing = results[i][1]
+                resultsScam = results[i][2]
+                resultVirus = results[i][3]
+                resultPassword = results[i][4]
+                bot.send_message(message.from_user.id,("Ваши результаты по тестам: "))
+                bot.send_message(message.from_user.id,("Тест по фишингу: "+ str(resultFishing)))
+                bot.send_message(message.from_user.id,("Тест по интернет-мошенникам: "+ str(resultsScam)))
+                bot.send_message(message.from_user.id,("Тест по вирусам: "+ str(resultVirus)))
+                bot.send_message(message.from_user.id,("Тест по паролям: "+ str(resultPassword)))
+
+
     connectionUser.close()
     bot.send_message(message.from_user.id, "Если хотите узнать подробнее, нажмите на кнопку внизу",reply_markup=InlineStartMarkup)
 
@@ -107,46 +178,103 @@ def get_callback(call):
                 bot.send_message(call.message.chat.id,"Вы можете пройти тест по теме",reply_markup=InlineTestmarkup)
                 file.close()
 
+
         elif call.data == "вирусы":
             with open("virusInfo.txt", "r", encoding="utf-8") as file:
                 text = file.read()
                 addBackButton()
+                InlineTestmarkup = types.InlineKeyboardMarkup(row_width=2)
+                testButton = types.InlineKeyboardButton("Запустить тест", callback_data="virusTest")
+
+                InlineTestmarkup.add(testButton)
+
                 bot.send_message(call.message.chat.id, text, reply_markup=InlineBackMarkup)
+                bot.send_message(call.message.chat.id,"Вы можете пройти тест по теме",reply_markup=InlineTestmarkup)
+
                 file.close()
 
         elif call.data == "мошенники":
-            #with open("scamInfo.txt", "r", encoding="utf-8") as file:
-                #text = file.read()
-            addBackButton()
-            bot.send_message(call.message.chat.id, "Текст отсутсвует", reply_markup=InlineBackMarkup)
-                #file.close()
+            with open("scamInfo.txt", "r", encoding="utf-8") as file:
+                text = file.read()
+                addBackButton()
+                InlineTestmarkup = types.InlineKeyboardMarkup(row_width=2)
+                testButton = types.InlineKeyboardButton("Запустить тест", callback_data="scamTest")
+                InlineTestmarkup.add(testButton)
+
+                bot.send_message(call.message.chat.id, text, reply_markup=InlineBackMarkup)
+                bot.send_message(call.message.chat.id,"Вы можете пройти тест по теме",reply_markup=InlineTestmarkup)
+                file.close()
 
         elif call.data == "пароли":
             with open("passwdInfo.txt", "r", encoding="utf-8") as file:
                 text = file.read()
                 addBackButton()
+                InlineTestmarkup = types.InlineKeyboardMarkup(row_width=2)
+                testButton = types.InlineKeyboardButton("Запустить тест", callback_data="passwdTest")
+                InlineTestmarkup.add(testButton)
+
                 bot.send_message(call.message.chat.id, text, reply_markup=InlineBackMarkup)
+                bot.send_message(call.message.chat.id,"Вы можете пройти тест по теме",reply_markup=InlineTestmarkup)
                 file.close()
+
+
         if call.data == "fishingTest":
             global answer
             global question
-            fishingStep = 0
+            global switch
+            #fishingStep = 0
             connection= sqlite3.connect('Questions.db')
             cursor = connection.cursor()
-            cursor.execute('SELECT txtvalue FROM Questions WHERE Qid > ?', (fishingStep,))
+            cursor.execute('SELECT txtvalue FROM Questions WHERE Qid > ?', (0,))
             question = cursor.fetchall()
-            print(question)
-            cursor.execute('SELECT answer FROM Questions WHERE Qid > ?', (fishingStep,))
+            cursor.execute('SELECT answer FROM Questions WHERE Qid > ?', (0,))
             answer = cursor.fetchall()
-            print(answer)
             connection.close()
-            startFishingTest(call)
+            switch = "fishing"
+            startTest(call)
+
+        elif call.data == "virusTest":
+            
+            connection= sqlite3.connect('Questions1.db')
+            cursor = connection.cursor()
+            cursor.execute('SELECT txtvalue FROM Questions WHERE Qid > ?', (0,))
+            question = cursor.fetchall()
+            cursor.execute('SELECT answer FROM Questions WHERE Qid > ?', (0,))
+            answer = cursor.fetchall()
+            connection.close()
+            switch = "virus"
+            startTest(call)
+
+        elif call.data == "scamTest":
+
+            connection= sqlite3.connect('Questions3.db')
+            cursor = connection.cursor()
+            cursor.execute('SELECT txtvalue FROM Questions WHERE Qid > ?', (0,))
+            question = cursor.fetchall()
+            cursor.execute('SELECT answer FROM Questions WHERE Qid > ?', (0,))
+            answer = cursor.fetchall()
+            connection.close()
+            switch = "scam"
+            startTest(call)
+
+        elif call.data == "passwdTest":
+
+            connection= sqlite3.connect('Questions2.db')
+            cursor = connection.cursor()
+            cursor.execute('SELECT txtvalue FROM Questions WHERE Qid > ?', (0,))
+            question = cursor.fetchall()
+            cursor.execute('SELECT answer FROM Questions WHERE Qid > ?', (0,))
+            answer = cursor.fetchall()
+            connection.close()
+            switch = "password"
+            startTest(call)
+
+        
             
         if call.data == "1" or call.data == "2" or call.data == "3":
+          
             answer_verif(call)
-            #call.data == '0'
-        #-------------MAIN MENU--------------------------------
-
+           
     except Exception as e:
          print(repr(e))
     if call.data == "возврат":
@@ -154,6 +282,30 @@ def get_callback(call):
 
 
 def returnMenu(call):
+    connectionUser = sqlite3.connect('mainDatabase.db')
+    cursorUser = connectionUser.cursor()
+    chatId = call.message.chat.id
+    try:
+        results_raw = cursorUser.execute('SELECT tgId,resultFishing,resultScam,resultVirus,resultPassword FROM Users ')
+        results = results_raw.fetchall()
+        connectionUser.commit()
+        connectionUser.close()
+        for i in range(len(results) - 1):
+            if str(chatId) == results[i][0]:
+                resultFishing = results[i][1]
+                resultsScam = results[i][2]
+                resultVirus = results[i][3]
+                resultPassword = results[i][4]
+                bot.send_message(call.message.chat.id,("Ваши результаты по тестам: "))
+                bot.send_message(call.message.chat.id,("Тест по фишингу: "+ str(resultFishing)))
+                bot.send_message(call.message.chat.id,("Тест по интернет-мошенникам: "+ str(resultsScam)))
+                bot.send_message(call.message.chat.id,("Тест по вирусам: "+ str(resultVirus)))
+                bot.send_message(call.message.chat.id,("Тест по паролям: "+ str(resultPassword)))
+        
+
+    except Exception as e:
+        print(repr(e))
+
     try:
         Inlinemarkup = types.InlineKeyboardMarkup(row_width=2)
 
@@ -184,66 +336,87 @@ def addBackButton():
 
 
 @bot.callback_query_handler(func = lambda callback: True)
-def startFishingTest(call):
-    global fishingStep
+def startTest(call):
+    global step
+    global rightAnswers
     global answer
     global question
-    global rightFishingAnswers
+    global switch
 
 
     #step = 0
 
-    if fishingStep >= len(question):
+    if step >= len(question):
         bot.send_message(call.message.chat.id,"Вы прошли тест, результаты сохранены и указаны ниже:")
-        bot.send_message(call.message.chat.id,(str(rightFishingAnswers) +"/" + str(len(question))))
+        bot.send_message(call.message.chat.id,(str(rightAnswers) +"/" + str(len(question))))
         userId = call.message.chat.id
         connectionUser = sqlite3.connect('mainDatabase.db')
         cursorUser = connectionUser.cursor()
-        cursorUser.execute('UPDATE Users SET resultFishing = ? WHERE tgId = ?', (rightFishingAnswers, userId))
-        rightFishingAnswers = 0
+        if switch == "fishing":
+            cursorUser.execute('UPDATE Users SET resultFishing = ? WHERE tgId = ?', (rightAnswers, userId))
+
+        if switch == "virus":
+            cursorUser.execute('UPDATE Users SET resultVirus = ? WHERE tgId = ?', (rightAnswers, userId))
+
+        if switch == "scam":
+            cursorUser.execute('UPDATE Users SET resultScam = ? WHERE tgId = ?', (rightAnswers, userId))
+        
+        if switch == "password":
+            cursorUser.execute('UPDATE Users SET resultPassword = ? WHERE tgId = ?', (rightAnswers, userId))
+
         connectionUser.commit()
         connectionUser.close()
 
-        #userId = bot.user.id
-        #cursorUser.execute()
-
         returnMenu(call)
 
-        fishingStep = 0
+        step = 0
     else:
-        localMarkup = types.InlineKeyboardMarkup(row_width=2)
-        frstButton = types.InlineKeyboardButton((fishingTestVar[fishingStep][0]),callback_data='1')
-        scndtButton = types.InlineKeyboardButton((fishingTestVar[fishingStep][1]),callback_data='2')
-        thrdButton = types.InlineKeyboardButton((fishingTestVar[fishingStep][2]),callback_data='3')
+        localMarkup = types.InlineKeyboardMarkup(row_width=1)
+        
+        if switch == "fishing":
+            frstButton = types.InlineKeyboardButton((fishingTestVar[step][0]),callback_data='1')
+            scndtButton = types.InlineKeyboardButton((fishingTestVar[step][1]),callback_data='2')
+            thrdButton = types.InlineKeyboardButton((fishingTestVar[step][2]),callback_data='3')
+
+        elif switch == "virus":
+            frstButton = types.InlineKeyboardButton((virusTestVar[step][0]),callback_data='1')
+            scndtButton = types.InlineKeyboardButton((virusTestVar[step][1]),callback_data='2')
+            thrdButton = types.InlineKeyboardButton((virusTestVar[step][2]),callback_data='3')
+
+        elif switch == "scam":
+            frstButton = types.InlineKeyboardButton((scamTestVar[step][0]),callback_data='1')
+            scndtButton = types.InlineKeyboardButton((scamTestVar[step][1]),callback_data='2')
+            thrdButton = types.InlineKeyboardButton((scamTestVar[step][2]),callback_data='3')
+        
+        elif switch == "password":
+            frstButton = types.InlineKeyboardButton((passwordTestVar[step][0]),callback_data='1')
+            scndtButton = types.InlineKeyboardButton((passwordTestVar[step][1]),callback_data='2')
+            thrdButton = types.InlineKeyboardButton((passwordTestVar[step][2]),callback_data='3')
+
                         
         localMarkup.add(frstButton)
         localMarkup.add(scndtButton)
         localMarkup.add(thrdButton)
-        bot.send_message(call.message.chat.id,question[fishingStep],reply_markup=localMarkup)
 
-        fishingStep = fishingStep + 1
+        bot.send_message(call.message.chat.id,question[step],reply_markup=localMarkup)
+
+        step = step + 1
 
     
-
-#@bot.callback_query_handler(func=lambda call: True)
-#print(call.data)
-
 def answer_verif(call):
-    global rightFishingAnswers
-    if (fishingStep - 1) >= len(answer):
-        rightFishingAnswers = 0
+    global switch
+    global rightAnswers
+    global step
+
+    if (step - 1) >= (len(answer)):
+
+        rightAnswers= 0
         
-    #print(fishingStep) 
     
-    elif int(call.data) == answer[fishingStep - 1][0]:
-        rightFishingAnswers = rightFishingAnswers + 1
-    startFishingTest(call)  
+    elif int(call.data) == answer[step - 1][0]:
+        rightAnswers = rightAnswers + 1
 
-    
-
-#@bot.callback_query_handler(func = lambda call: True)
-
-
+    startTest(call)  
 
 
 bot.polling(none_stop=True, interval=0)
